@@ -592,4 +592,190 @@ flowchart TD
     J --> S
     N --> S
     R --> S
+```
+
+# Adaptive 2D Posture Correction System - UML Diagrams
+
+## 1. Use Case Diagram
+```mermaid
+graph TD
+    subgraph Actors
+        A[User]
+        B[System]
+        C[Camera]
+    end
+
+    subgraph User Use Cases
+        A --> D[Start Posture Monitoring]
+        A --> E[View Posture Analysis]
+        A --> F[Receive Real-time Feedback]
+        A --> G[View Posture History]
+        A --> H[Set Posture Goals]
+        A --> I[Configure Alerts]
+    end
+
+    subgraph System Use Cases
+        B --> J[Capture Posture Data]
+        B --> K[Analyze Posture]
+        B --> L[Generate Feedback]
+        B --> M[Store Posture History]
+        B --> N[Track Progress]
+        B --> O[Send Alerts]
+    end
+
+    subgraph Camera Use Cases
+        C --> P[Capture Video Feed]
+        C --> Q[Detect Body Points]
+        C --> R[Track Movement]
+    end
+
+    style A fill:#f9f,stroke:#333,stroke-width:2px
+    style B fill:#bbf,stroke:#333,stroke-width:2px
+    style C fill:#bfb,stroke:#333,stroke-width:2px
+```
+
+## 2. Class Diagram
+```mermaid
+classDiagram
+    class PostureMonitor {
+        +startMonitoring()
+        +stopMonitoring()
+        +getCurrentPosture()
+        +analyzePosture()
+        +generateFeedback()
+    }
+    
+    class CameraService {
+        +initializeCamera()
+        +captureFrame()
+        +detectBodyPoints()
+        +trackMovement()
+    }
+    
+    class PostureAnalyzer {
+        +calculateAngles()
+        +compareWithIdeal()
+        +detectDeviations()
+        +scorePosture()
+    }
+    
+    class FeedbackGenerator {
+        +generateVisualFeedback()
+        +generateAudioFeedback()
+        +generateTextFeedback()
+        +customizeFeedback()
+    }
+    
+    class PostureHistory {
+        +storePostureData()
+        +retrieveHistory()
+        +generateReports()
+        +trackProgress()
+    }
+    
+    class UserSettings {
+        +setPostureGoals()
+        +configureAlerts()
+        +setFeedbackPreferences()
+        +savePreferences()
+    }
+    
+    PostureMonitor --> CameraService
+    PostureMonitor --> PostureAnalyzer
+    PostureMonitor --> FeedbackGenerator
+    PostureMonitor --> PostureHistory
+    PostureMonitor --> UserSettings
+```
+
+## 3. Sequence Diagram - Posture Monitoring Flow
+```mermaid
+sequenceDiagram
+    participant User
+    participant PostureMonitor
+    participant CameraService
+    participant PostureAnalyzer
+    participant FeedbackGenerator
+    participant PostureHistory
+
+    User->>PostureMonitor: Start Monitoring
+    PostureMonitor->>CameraService: Initialize Camera
+    CameraService-->>PostureMonitor: Camera Ready
+    
+    loop Every Frame
+        CameraService->>CameraService: Capture Frame
+        CameraService->>PostureAnalyzer: Send Frame Data
+        PostureAnalyzer->>PostureAnalyzer: Analyze Posture
+        PostureAnalyzer->>FeedbackGenerator: Send Analysis Results
+        
+        alt Posture Deviation Detected
+            FeedbackGenerator->>User: Generate Feedback
+        end
+        
+        PostureAnalyzer->>PostureHistory: Store Posture Data
+    end
+    
+    User->>PostureMonitor: Stop Monitoring
+    PostureMonitor->>PostureHistory: Generate Summary Report
+    PostureHistory-->>User: Show Report
+```
+
+## 4. Activity Diagram - Posture Correction Process
+```mermaid
+flowchart TD
+    A[Start] --> B[Initialize Camera]
+    B --> C[Capture Video Feed]
+    C --> D[Detect Body Points]
+    D --> E{Valid Detection?}
+    E -->|No| F[Retry Detection]
+    E -->|Yes| G[Calculate Posture Angles]
+    G --> H[Compare with Ideal Posture]
+    H --> I{Deviation Detected?}
+    I -->|No| J[Continue Monitoring]
+    I -->|Yes| K[Generate Feedback]
+    K --> L[Display Visual Feedback]
+    K --> M[Play Audio Alert]
+    K --> N[Show Text Instructions]
+    L --> O[Store Posture Data]
+    M --> O
+    N --> O
+    O --> P{Continue Monitoring?}
+    P -->|Yes| C
+    P -->|No| Q[Generate Summary Report]
+    Q --> R[End Session]
+```
+
+## 5. Component Architecture
+```mermaid
+graph TD
+    subgraph "Posture Correction System"
+        A[User Interface] --> B[Posture Monitor]
+        B --> C[Camera Service]
+        B --> D[Posture Analyzer]
+        B --> E[Feedback Generator]
+        B --> F[Data Storage]
+        
+        subgraph "Camera Service"
+            C --> C1[Frame Capture]
+            C --> C2[Body Detection]
+            C --> C3[Movement Tracking]
+        end
+        
+        subgraph "Posture Analyzer"
+            D --> D1[Angle Calculation]
+            D --> D2[Deviation Detection]
+            D --> D3[Posture Scoring]
+        end
+        
+        subgraph "Feedback Generator"
+            E --> E1[Visual Feedback]
+            E --> E2[Audio Feedback]
+            E --> E3[Text Instructions]
+        end
+        
+        subgraph "Data Storage"
+            F --> F1[Posture History]
+            F --> F2[User Settings]
+            F --> F3[Progress Reports]
+        end
+    end
 ``` 
