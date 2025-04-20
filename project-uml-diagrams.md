@@ -221,40 +221,46 @@ stateDiagram-v2
 
 ## 7. Use Cases
 
-### Authentication Use Cases
+### Authentication System Use Cases
 ```mermaid
-useCaseDiagram
-    actor User
-    actor Admin
-    actor System
-    
-    User --> (Register Account)
-    User --> (Login)
-    User --> (Logout)
-    User --> (Reset Password)
-    User --> (Update Profile)
-    User --> (View Profile)
-    User --> (Change Password)
-    
-    Admin --> (View User List)
-    Admin --> (Manage User Accounts)
-    Admin --> (View System Logs)
-    Admin --> (Block User)
-    Admin --> (Unblock User)
-    Admin --> (View User Activity)
-    
-    System --> (Validate Credentials)
-    System --> (Generate Tokens)
-    System --> (Send Emails)
-    System --> (Log Activities)
-    System --> (Monitor Security)
-    System --> (Backup Data)
-    
-    (Register Account) ..> (Validate Credentials) : <<include>>
-    (Login) ..> (Validate Credentials) : <<include>>
-    (Login) ..> (Generate Tokens) : <<include>>
-    (Reset Password) ..> (Send Emails) : <<include>>
-    (Manage User Accounts) ..> (Log Activities) : <<include>>
+graph TD
+    subgraph Actors
+        A[User]
+        B[Admin]
+        C[System]
+    end
+
+    subgraph User Use Cases
+        A --> D[Register Account]
+        A --> E[Login]
+        A --> F[Logout]
+        A --> G[Reset Password]
+        A --> H[Update Profile]
+        A --> I[View Profile]
+        A --> J[Change Password]
+    end
+
+    subgraph Admin Use Cases
+        B --> K[View User List]
+        B --> L[Manage User Accounts]
+        B --> M[View System Logs]
+        B --> N[Block User]
+        B --> O[Unblock User]
+        B --> P[View User Activity]
+    end
+
+    subgraph System Use Cases
+        C --> Q[Validate Credentials]
+        C --> R[Generate Tokens]
+        C --> S[Send Emails]
+        C --> T[Log Activities]
+        C --> U[Monitor Security]
+        C --> V[Backup Data]
+    end
+
+    style A fill:#f9f,stroke:#333,stroke-width:2px
+    style B fill:#bbf,stroke:#333,stroke-width:2px
+    style C fill:#bfb,stroke:#333,stroke-width:2px
 ```
 
 ## 8. Security Architecture
@@ -538,79 +544,52 @@ sequenceDiagram
 
 ### User Authentication Flow
 ```mermaid
-activityDiagram
-    start
-    :User attempts login;
-    
-    if (Valid email format?) then (no)
-        :Show email format error;
-        stop
-    else (yes)
-        :Check user exists;
-    endif
-    
-    if (User exists?) then (no)
-        :Show user not found error;
-        stop
-    else (yes)
-        :Validate password;
-    endif
-    
-    if (Valid password?) then (no)
-        :Show invalid password error;
-        :Increment failed attempts;
-        if (Too many attempts?) then (yes)
-            :Lock account;
-            :Send security alert;
-            stop
-        else (no)
-            stop
-        endif
-    else (yes)
-        :Generate JWT token;
-        :Store session;
-        :Update last login;
-        :Redirect to dashboard;
-    endif
-    
-    stop
+flowchart TD
+    A[Start] --> B[User attempts login]
+    B --> C{Valid email format?}
+    C -->|No| D[Show email format error]
+    C -->|Yes| E[Check user exists]
+    E --> F{User exists?}
+    F -->|No| G[Show user not found error]
+    F -->|Yes| H[Validate password]
+    H --> I{Valid password?}
+    I -->|No| J[Show invalid password error]
+    J --> K[Increment failed attempts]
+    K --> L{Too many attempts?}
+    L -->|Yes| M[Lock account]
+    M --> N[Send security alert]
+    L -->|No| O[Stop]
+    I -->|Yes| P[Generate JWT token]
+    P --> Q[Store session]
+    Q --> R[Update last login]
+    R --> S[Redirect to dashboard]
+    D --> O
+    G --> O
+    N --> O
 ```
 
 ### Account Recovery Flow
 ```mermaid
-activityDiagram
-    start
-    :User requests password reset;
-    
-    if (Valid email?) then (no)
-        :Show invalid email error;
-        stop
-    else (yes)
-        :Generate reset token;
-        :Store token in database;
-        :Send reset email;
-    endif
-    
-    :User clicks reset link;
-    
-    if (Token valid?) then (no)
-        :Show invalid token error;
-        stop
-    else (yes)
-        :Show password reset form;
-    endif
-    
-    :User submits new password;
-    
-    if (Password meets requirements?) then (no)
-        :Show password requirements error;
-        stop
-    else (yes)
-        :Update password;
-        :Invalidate reset token;
-        :Send confirmation email;
-        :Redirect to login;
-    endif
-    
-    stop
+flowchart TD
+    A[Start] --> B[User requests password reset]
+    B --> C{Valid email?}
+    C -->|No| D[Show invalid email error]
+    C -->|Yes| E[Generate reset token]
+    E --> F[Store token in database]
+    F --> G[Send reset email]
+    G --> H[User clicks reset link]
+    H --> I{Token valid?}
+    I -->|No| J[Show invalid token error]
+    I -->|Yes| K[Show password reset form]
+    K --> L[User submits new password]
+    L --> M{Password meets requirements?}
+    M -->|No| N[Show password requirements error]
+    M -->|Yes| O[Update password]
+    O --> P[Invalidate reset token]
+    P --> Q[Send confirmation email]
+    Q --> R[Redirect to login]
+    D --> S[Stop]
+    J --> S
+    N --> S
+    R --> S
 ``` 
